@@ -7,6 +7,6 @@ type Commit struct {
 	Author    *user.User
 	Committer *user.User
 	Commit    struct {
-		message string
+		Message
 	}
 }
