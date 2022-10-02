@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	. "githubParse/githubParse/member"
+	. "githubParse/githubParse/repository"
 	"githubParse/githubParse/utils"
 )
 
@@ -12,9 +13,6 @@ const OrganisationURL = utils.BaseURL + "/orgs/"
 const OrganisationMembersURL = "/members"
 
 func Information(client *http.Client, organizationName string) (*Organization, error) {
-	var allMembers []string
-	membersInformation := make(map[string]*Member)
-
 	organization, err := GetOrganisationsInfo(client, organizationName)
 	if err != nil {
 		return nil, err
@@ -23,14 +21,13 @@ func Information(client *http.Client, organizationName string) (*Organization, e
 	if err != nil {
 		return nil, err
 	}
-
-	for _, member := range *members {
-		membersInformation[member.Login] = member
-		allMembers = append(allMembers, member.Login)
+	repositories, err := GetOrganisationsRepositories(client, organizationName)
+	if err != nil {
+		return nil, err
 	}
 
-	organization.Members = membersInformation
-	organization.MemberNames = allMembers
+	addOrganisationsMembers(organization, members)
+	addOrganisationsRepositories(organization, repositories)
 
 	return organization, nil
 
@@ -44,8 +41,6 @@ func GetOrganisationsInfo(client *http.Client, organizationName string) (*Organi
 	defer res.Body.Close()
 
 	organization := Organization{}
-	//body, _ := io.ReadAll(res.Body)
-	//fmt.Println(string(body))
 	err = utils.DecodeResponseJSON(res, &organization)
 	if err != nil {
 		return nil, fmt.Errorf("organization information decode issue: %s", err)
@@ -70,4 +65,46 @@ func GetOrganisationsMembers(client *http.Client, organizationName string) (*[]*
 	}
 
 	return &members, nil
+}
+
+func addOrganisationsMembers(organisation *Organization, members *[]*Member) {
+	var allMembers []string
+	membersInformation := make(map[string]*Member)
+
+	for _, member := range *members {
+		membersInformation[member.Login] = member
+		allMembers = append(allMembers, member.Login)
+	}
+
+	organisation.Members = membersInformation
+	organisation.MemberNames = allMembers
+}
+
+func GetOrganisationsRepositories(client *http.Client, organizationName string) (*[]*Repository, error) {
+	res, err := utils.GetRequest(client, OrganisationURL+organizationName+RepositoryURL)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	var repositories []*Repository
+	err = utils.DecodeResponseJSON(res, &repositories)
+	if err != nil {
+		return nil, fmt.Errorf("organization repositories decode issue: %s", err)
+	}
+	return &repositories, nil
+
+}
+
+func addOrganisationsRepositories(organisation *Organization, repositories *[]*Repository) {
+	var allRepositories []string
+	repositoriesInformation := make(map[string]*Repository)
+
+	for _, repository := range *repositories {
+		repositoriesInformation[repository.Name] = repository
+		allRepositories = append(allRepositories, repository.Name)
+	}
+
+	organisation.Repositories = repositoriesInformation
+	organisation.RepositoryNames = allRepositories
 }
