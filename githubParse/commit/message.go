@@ -33,3 +33,11 @@ func (m *Message) IsMergeMessage() bool {
 func (m *Message) ContainsEmoji() bool {
 	return emojiPattern.Match(m.toBytes())
 }
+
+func (m *Message) FindEmojis() [][]byte {
+	return emojiPattern.FindAll(m.toBytes(), -1)
+}
+
+func (m *Message) toBytes() []byte {
+	return []byte(*m)
+}
