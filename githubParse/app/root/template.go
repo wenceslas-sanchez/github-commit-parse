@@ -1,4 +1,4 @@
-package organization
+package root
 
 import "html/template"
 
