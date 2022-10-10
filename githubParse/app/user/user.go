@@ -1,7 +1,8 @@
-package app
+package user
 
 import (
 	"fmt"
+	"githubParse/githubParse/app"
 	"githubParse/githubParse/organization"
 	"net/http"
 	"regexp"
@@ -27,7 +28,7 @@ func (u *userHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		fmt.Println()
 		return
 	default:
-		notFound(w, r)
+		app.NotFound(w, r)
 	}
 }
 
