@@ -11,8 +11,8 @@ func Counters(commits *[]*Commit) (*map[string]int, *NestedCounter) {
 		commit := (*c).Commit
 		login := (*c).Author.Login
 		message := commit.Message
-		// Ignore Merge messages (automatic one)
-		if message.IsMergeMessage() {
+		// ignore automatic messages like Merge, PR etc ..
+		if message.IsAutomaticMessage() {
 			continue
 		}
 		commitCounter[login] += 1
