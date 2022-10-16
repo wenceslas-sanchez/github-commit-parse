@@ -37,7 +37,7 @@ func (u *UserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			utils.NotFound(w)
 			return
 		}
-		MemberInformation(u.Organization, member, w)
+		MemberInformation(member, w)
 		return
 	default:
 		utils.NotFound(w)
