@@ -31,7 +31,6 @@ func Information(client *http.Client, owner, repository string) (*[]*Commit, err
 	if ok {
 		fmt.Println(lastPageNum)
 	}
-
 	max, _ := strconv.Atoi(lastPageNum)
 	for _, i := range makeRange(2, max+1) {
 		res, err := requestCommitPage(client, owner, repository, strconv.Itoa(i))
