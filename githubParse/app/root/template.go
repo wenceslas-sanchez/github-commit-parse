@@ -2,7 +2,7 @@ package root
 
 import "html/template"
 
-const Template string = `<h1>{{.Login}}</h1>
+const Template string = `<h1>{{.Name}} ({{.Login}})</h1>
 <table>
 <tr style='text-align: left'>
 	<th>Repository</th>
